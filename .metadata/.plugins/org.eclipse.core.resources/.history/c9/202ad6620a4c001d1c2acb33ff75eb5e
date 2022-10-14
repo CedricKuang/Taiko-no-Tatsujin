@@ -60,7 +60,7 @@ public class ClassifyVibration extends PApplet {
             public void run()
             {
                 while (true){
-                	randomIndex = new Random().nextInt(1, classNames.length);
+                	randomIndex = new Random().nextInt(classNames.length);
                 	hasPrinted = false;
                 	timerTime = System.currentTimeMillis();
                 	System.out.println(timerTime);

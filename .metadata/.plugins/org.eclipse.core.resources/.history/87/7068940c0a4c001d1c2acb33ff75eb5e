@@ -60,11 +60,11 @@ public class ClassifyVibration extends PApplet {
             public void run()
             {
                 while (true){
-                	randomIndex = new Random().nextInt(1, classNames.length);
+                	randomIndex = new Random().nextInt(classNames.length);
                 	hasPrinted = false;
                 	timerTime = System.currentTimeMillis();
                 	System.out.println(timerTime);
-                    System.out.println(classNames[randomIndex] + "!");
+                    System.out.println("Palm!");
                     try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
@@ -152,12 +152,6 @@ public class ClassifyVibration extends PApplet {
 			System.out.println(guessedLabel);
 			System.out.println(mainTime);
 			System.out.println("Time Diff: " + (mainTime - timerTime));
-			
-			if (guessedLabel.equals(classNames[randomIndex])) {
-				System.out.println("You are correct!");
-			} else {
-				System.out.println("You are wrong!");
-			}
 		}
 	}
 	
