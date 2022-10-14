@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="weka">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/IntMLDemo/lib/weka.jar!/" />
+      <root url="jar://$PROJECT_DIR$/IntMLDemo/lib/sound.jar!/" />
+      <root url="jar://$PROJECT_DIR$/IntMLDemo/lib/jsyn-20171016.jar!/" />
+      <root url="jar://$PROJECT_DIR$/IntMLDemo/lib/javamp3-1.0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/IntMLDemo/lib/core.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
