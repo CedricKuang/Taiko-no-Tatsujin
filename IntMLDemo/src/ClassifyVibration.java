@@ -38,6 +38,8 @@ public class ClassifyVibration extends PApplet {
 	static long timerTime = 0;
 	static long mainTime = 0;
 	static boolean hasPrinted = false;
+	static int score = 0;
+	static int lastLevel = -1;
 
 	MLClassifier classifier;
 	
@@ -66,7 +68,7 @@ public class ClassifyVibration extends PApplet {
                 	System.out.println(timerTime);
                     System.out.println(classNames[randomIndex] + "!");
                     try {
-						Thread.sleep(10000);
+						Thread.sleep(5000 + (int)(Math.random() * 10000));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -149,15 +151,66 @@ public class ClassifyVibration extends PApplet {
 		if (!guessedLabel.equals("quiet") && !hasPrinted) {
 			hasPrinted = true;
 			mainTime = System.currentTimeMillis();
-			System.out.println(guessedLabel);
-			System.out.println(mainTime);
-			System.out.println("Time Diff: " + (mainTime - timerTime));
-			
+			 
 			if (guessedLabel.equals(classNames[randomIndex])) {
 				System.out.println("You are correct!");
 			} else {
 				System.out.println("You are wrong!");
 			}
+			
+			System.out.println(guessedLabel);
+			System.out.println(mainTime);
+			System.out.println("Time Diff: " + (mainTime - timerTime));
+			
+			long timeDiff = mainTime - timerTime;
+			if (timeDiff < 0) {
+				System.out.println("You tapped too early!");
+				lastLevel = -1;
+			} else if (timeDiff > 1000) {
+				System.out.println("You are too slow!");
+				lastLevel = -1;
+			} else if (timeDiff > 500) {
+				System.out.println("You gained 1 points");
+				score += 1;
+				
+				if (lastLevel >= 2) {
+					System.out.println("Combo + 1!");
+					score += 1;
+				}
+				
+				lastLevel = max(lastLevel, 2);
+			} else if (timeDiff > 300) {
+				System.out.println("You gained 3 points");
+				score += 3;
+				
+				if (lastLevel >= 3) {
+					System.out.println("Combo + 1!");
+					score += 3;
+				}
+				
+				lastLevel = max(lastLevel, 3);
+			} else if (timeDiff > 100) {
+				System.out.println("You gained 9 points");
+				score += 9;
+				
+				if (lastLevel >= 4) {
+					System.out.println("Combo + 1!");
+					score += 9;
+				}
+				
+				lastLevel = max(lastLevel, 4);
+			} else {
+				System.out.println("You gained 50 points");
+				score += 50;
+				
+				if (lastLevel >= 5) {
+					System.out.println("Combo + 1!");
+					score += 50;
+				}
+				lastLevel = max(lastLevel, 5);
+			}
+			
+			System.out.println("Your current score: " + score);
 		}
 	}
 	

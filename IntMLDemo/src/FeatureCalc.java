@@ -41,12 +41,33 @@ public class FeatureCalc implements Serializable {
 		
 		//Yang: consider adding more features to make your demo more accurate and robust to ambient noise
 
-		nfeatures = data.measurements.length;
+		nfeatures = data.measurements.length + 2;
 		
-		for(int i = 0; i < nfeatures; i++){
+		float maxMea = Integer.MIN_VALUE;	
+		int max_freq = 0;
+		
+		double total_intensity = 0;
+		double intensity_mul_frequency = 0;
+		
+		for(int i = 0; i < nfeatures - 2; i++){
 			attrs.add(new Attribute("bin"+i, i));
 			values.add((double) data.measurements[i]);
+			
+			total_intensity += data.measurements[i];
+			intensity_mul_frequency += (data.measurements[i] * i);
+			
+			if (maxMea > data.measurements[i])
+			{
+				maxMea =data.measurements[i];
+				max_freq = i;
+			}		
 		}
+		
+		attrs.add(new Attribute("max"));
+		values.add((double)max_freq);
+		
+		attrs.add(new Attribute("average intensity"));
+		values.add((double)(intensity_mul_frequency / total_intensity));
 
 		/* build our dataset (instance header) */
 		attrs.add(new Attribute("classlabel", classLabels, nfeatures));
@@ -66,9 +87,27 @@ public class FeatureCalc implements Serializable {
 	private Instance calcOtherInstance(DataInstance data) {
 		final double[] valueArray = new double[nfeatures+1];
 
-		for(int i = 0; i < nfeatures; i++){
+		float maxMea = Integer.MIN_VALUE;
+		int max_freq = 0;
+		
+		double total_intensity = 0;
+		double intensity_mul_frequency = 0;
+		
+		for(int i = 0; i < nfeatures - 2; i++){
 			valueArray[i] = data.measurements[i];
+			
+			total_intensity += data.measurements[i];
+			intensity_mul_frequency += (data.measurements[i] * i);
+			
+			if (maxMea > data.measurements[i])
+			{
+				maxMea =data.measurements[i];
+				max_freq = i;
+			}
 		}
+		
+		valueArray[nfeatures - 2] = max_freq;
+		valueArray[nfeatures - 1] = intensity_mul_frequency / total_intensity;
 		
 		return instanceFromArray(valueArray, data.label);
 	}
