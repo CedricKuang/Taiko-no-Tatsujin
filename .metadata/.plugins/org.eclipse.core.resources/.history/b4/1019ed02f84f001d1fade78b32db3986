@@ -93,10 +93,10 @@ public class MLClassifier implements Serializable {
         
         try {
 			double[] p = classifier.distributionForInstance(instance);
-//			
-//			System.out.println("Palm: " + p[0]);
-//			System.out.println("Tip: " + p[1]);
-//			System.out.println("Quiet: " + p[2]);
+			
+			System.out.println("Palm: " + p[0]);
+			System.out.println("Tip: " + p[1]);
+			System.out.println("Quiet: " + p[2]);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

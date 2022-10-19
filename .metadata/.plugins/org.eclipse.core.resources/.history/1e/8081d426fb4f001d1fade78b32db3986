@@ -40,12 +40,6 @@ public class ClassifyVibration extends PApplet {
 	static boolean hasPrinted = false;
 	static int score = 0;
 	static int lastLevel = -1;
-	
-	static int numShake = 0;
-	static int numPalm = 0;
-	static int numSample = 0;
-	static long timeShake = 0;
-	static long timePalm = 0;
 
 	MLClassifier classifier;
 	
@@ -154,168 +148,69 @@ public class ClassifyVibration extends PApplet {
 			text("Data collected: " + dataCount, 20, 60);
 		}
 		
-		if (!guessedLabel.equals("") && !hasPrinted) {
-			// hasPrinted = true;
+		if (!guessedLabel.equals("quiet") && !hasPrinted) {
+			hasPrinted = true;
 			mainTime = System.currentTimeMillis();
-			numSample++;
-			
-			if (guessedLabel.equals("palm"))
-			{
-				numPalm++;
-				if (numPalm == 1)
-					timePalm = mainTime;
-			}
-			else if (guessedLabel.equals("shake"))
-			{
-				numShake++;
-				if (numShake == 1)
-					timeShake = mainTime;
-			}
-			
-			if (numSample == 100)
-			{
-				hasPrinted = true;
-				if (numPalm != 0 && numShake > 5)
-				{
-					guessedLabel = "shake";
-					mainTime = timeShake;
-				}
-				else if (numPalm != 0)
-				{
-					guessedLabel = "palm";
-					mainTime = timePalm;
-				}
-				else
-				{
-					guessedLabel = "quiet";
-				}
-				
-				if (guessedLabel.equals(classNames[randomIndex])) {
-					System.out.println("You are correct!");
-				} else {
-					System.out.println("You are wrong!");
-				}
-				
-				System.out.println(guessedLabel);
-				System.out.println(mainTime);
-				System.out.println("Time Diff: " + (mainTime - timerTime));
-				
-				long timeDiff = mainTime - timerTime;
-				if (timeDiff < 0) {
-					System.out.println("You tapped too early!");
-					lastLevel = -1;
-				} else if (timeDiff > 1000) {
-					System.out.println("You are too slow!");
-					lastLevel = -1;
-				} else if (timeDiff > 500) {
-					System.out.println("You gained 1 points");
-					score += 1;
-					
-					if (lastLevel >= 2) {
-						System.out.println("Combo + 1!");
-						score += 1;
-					}
-					
-					lastLevel = max(lastLevel, 2);
-				} else if (timeDiff > 300) {
-					System.out.println("You gained 3 points");
-					score += 3;
-					
-					if (lastLevel >= 3) {
-						System.out.println("Combo + 1!");
-						score += 3;
-					}
-					
-					lastLevel = max(lastLevel, 3);
-				} else if (timeDiff > 100) {
-					System.out.println("You gained 9 points");
-					score += 9;
-					
-					if (lastLevel >= 4) {
-						System.out.println("Combo + 1!");
-						score += 9;
-					}
-					
-					lastLevel = max(lastLevel, 4);
-				} else {
-					System.out.println("You gained 50 points");
-					score += 50;
-					
-					if (lastLevel >= 5) {
-						System.out.println("Combo + 1!");
-						score += 50;
-					}
-					lastLevel = max(lastLevel, 5);
-				}
-				
-				System.out.println("Your current score: " + score);
-				
-				numSample = 0;
-				numShake = 0;
-				numPalm = 0;
-				timeShake = 0;
-				timePalm = 0;
-			}
 			 
-//			if (guessedLabel.equals(classNames[randomIndex])) {
-//				System.out.println("You are correct!");
-//			} else {
-//				System.out.println("You are wrong!");
-//			}
-//			
-//			System.out.println(guessedLabel);
-//			System.out.println(mainTime);
-//			System.out.println("Time Diff: " + (mainTime - timerTime));
-//			
-//			long timeDiff = mainTime - timerTime;
-//			if (timeDiff < 0) {
-//				System.out.println("You tapped too early!");
-//				lastLevel = -1;
-//			} else if (timeDiff > 1000) {
-//				System.out.println("You are too slow!");
-//				lastLevel = -1;
-//			} else if (timeDiff > 500) {
-//				System.out.println("You gained 1 points");
-//				score += 1;
-//				
-//				if (lastLevel >= 2) {
-//					System.out.println("Combo + 1!");
-//					score += 1;
-//				}
-//				
-//				lastLevel = max(lastLevel, 2);
-//			} else if (timeDiff > 300) {
-//				System.out.println("You gained 3 points");
-//				score += 3;
-//				
-//				if (lastLevel >= 3) {
-//					System.out.println("Combo + 1!");
-//					score += 3;
-//				}
-//				
-//				lastLevel = max(lastLevel, 3);
-//			} else if (timeDiff > 100) {
-//				System.out.println("You gained 9 points");
-//				score += 9;
-//				
-//				if (lastLevel >= 4) {
-//					System.out.println("Combo + 1!");
-//					score += 9;
-//				}
-//				
-//				lastLevel = max(lastLevel, 4);
-//			} else {
-//				System.out.println("You gained 50 points");
-//				score += 50;
-//				
-//				if (lastLevel >= 5) {
-//					System.out.println("Combo + 1!");
-//					score += 50;
-//				}
-//				lastLevel = max(lastLevel, 5);
-//			}
-//			
-//			System.out.println("Your current score: " + score);
+			if (guessedLabel.equals(classNames[randomIndex])) {
+				System.out.println("You are correct!");
+			} else {
+				System.out.println("You are wrong!");
+			}
+			
+			System.out.println(guessedLabel);
+			System.out.println(mainTime);
+			System.out.println("Time Diff: " + (mainTime - timerTime));
+			
+			long timeDiff = mainTime - timerTime;
+			if (timeDiff < 0) {
+				System.out.println("You tapped too early!");
+				lastLevel = -1;
+			} else if (timeDiff > 1000) {
+				System.out.println("You are too slow!");
+				lastLevel = -1;
+			} else if (timeDiff > 500) {
+				System.out.println("You gained 1 points");
+				score += 1;
+				
+				if (lastLevel >= 2) {
+					System.out.println("Combo + 1!");
+					score += 1;
+				}
+				
+				lastLevel = max(lastLevel, 2);
+			} else if (timeDiff > 300) {
+				System.out.println("You gained 3 points");
+				score += 3;
+				
+				if (lastLevel >= 3) {
+					System.out.println("Combo + 1!");
+					score += 3;
+				}
+				
+				lastLevel = max(lastLevel, 3);
+			} else if (timeDiff > 100) {
+				System.out.println("You gained 9 points");
+				score += 9;
+				
+				if (lastLevel >= 4) {
+					System.out.println("Combo + 1!");
+					score += 9;
+				}
+				
+				lastLevel = max(lastLevel, 4);
+			} else {
+				System.out.println("You gained 50 points");
+				score += 50;
+				
+				if (lastLevel >= 5) {
+					System.out.println("Combo + 1!");
+					score += 50;
+				}
+				lastLevel = max(lastLevel, 5);
+			}
+			
+			System.out.println("Your current score: " + score);
 		}
 	}
 	

@@ -175,12 +175,12 @@ public class ClassifyVibration extends PApplet {
 			if (numSample == 100)
 			{
 				hasPrinted = true;
-				if (numPalm != 0 && numShake > 5)
+				if (numPalm != 0 && numShake != 0)
 				{
 					guessedLabel = "shake";
 					mainTime = timeShake;
 				}
-				else if (numPalm != 0)
+				else if (numPalm != 0 && numShake == 0)
 				{
 					guessedLabel = "palm";
 					mainTime = timePalm;

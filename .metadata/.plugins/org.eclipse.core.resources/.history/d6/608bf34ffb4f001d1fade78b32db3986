@@ -175,12 +175,12 @@ public class ClassifyVibration extends PApplet {
 			if (numSample == 100)
 			{
 				hasPrinted = true;
-				if (numPalm != 0 && numShake > 5)
+				if (numPalm != 0 && numShake != 0)
 				{
 					guessedLabel = "shake";
 					mainTime = timeShake;
 				}
-				else if (numPalm != 0)
+				else if (numPalm != 0 && numShake == 0)
 				{
 					guessedLabel = "palm";
 					mainTime = timePalm;
@@ -249,12 +249,6 @@ public class ClassifyVibration extends PApplet {
 				}
 				
 				System.out.println("Your current score: " + score);
-				
-				numSample = 0;
-				numShake = 0;
-				numPalm = 0;
-				timeShake = 0;
-				timePalm = 0;
 			}
 			 
 //			if (guessedLabel.equals(classNames[randomIndex])) {
