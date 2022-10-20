@@ -33,6 +33,10 @@ public class ClassifyVibration extends PApplet {
 	static String[] classNames = {"quiet", "palm", "shake"};
 	int classIndex = 0;
 	int dataCount = 0;
+	String scoreMsg = "";
+	String comboMsg = "";
+//	String scoreMsg = "";
+	String printLabel = "";
 	
 	static int randomIndex = 0;
 	static long timerTime = 0;
@@ -46,6 +50,16 @@ public class ClassifyVibration extends PApplet {
 	static int numSample = 0;
 	static long timeShake = 0;
 	static long timePalm = 0;
+	
+	static int xCor = 500;
+	static int yCor = 80;
+	
+	static int red = 0;
+	static int green = 0;
+	static int blue = 0;
+	
+	static ArrayList<Integer> xCors = new ArrayList<Integer>();
+	static ArrayList<String> labels = new ArrayList<String>();
 
 	MLClassifier classifier;
 	
@@ -71,10 +85,10 @@ public class ClassifyVibration extends PApplet {
                 	randomIndex = new Random().nextInt(1, classNames.length);
                 	hasPrinted = false;
                 	timerTime = System.currentTimeMillis();
-                	System.out.println(timerTime);
-                    System.out.println(classNames[randomIndex] + "!");
+                	labels.add(classNames[randomIndex]);
+            		xCors.add(800);
                     try {
-						Thread.sleep(5000 + (int)(Math.random() * 10000));
+						Thread.sleep(2000 + (int)(Math.random() * 2000));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -109,17 +123,18 @@ public class ClassifyVibration extends PApplet {
 		  
 		/* patch the AudioIn */
 		fft.input(in);
+		
+		
 	}
 
 	public void draw() {
-		background(0);
+		background(red, 125, 32);
 		fill(0);
-		stroke(255);
 		
 		waveform.analyze();
 
 		beginShape();
-		  
+		rect(10, 60, 100, 30);  
 		for(int i = 0; i < nsamples; i++)
 		{
 			vertex(
@@ -136,186 +151,196 @@ public class ClassifyVibration extends PApplet {
 		
 
 		for(int i = 0; i < bands; i++){
-
+			int randomIndex = new Random().nextInt(5);
+			
+			if (randomIndex == 0) {
+				stroke(0, red, red);
+			} else if (randomIndex == 1) {
+				stroke(red, 0, red);
+			} else if (randomIndex == 2) {
+				stroke(0, 0, red);
+			} else if (randomIndex == 3) {
+				stroke(59, 123, 50);
+			} else {
+				stroke(32, 80, 95);
+			}
+			
 			/* the result of the FFT is normalized */
 			/* draw the line for frequency band i scaling it up by 40 to get more amplitude */
 			line( i, height, i, height - spectrum[i]*height*40);
 			fftFeatures[i] = spectrum[i];
 		} 
 
+		stroke(255);
 		fill(255);
 		textSize(30);
+		
+		for (int i = 0; i < labels.size(); i++) {
+			text(labels.get(i), xCors.get(i), yCor);
+			xCors.set(i,  xCors.get(i) - 1);
+			
+			if (xCors.get(i) < 0) {
+				labels.remove(i);
+				xCors.remove(i);
+			}
+		}
+		
+		
 		if(classifier != null) {
 			guessedLabel = classifier.classify(captureInstance(null));
-			text("classified as: " + guessedLabel, 20, 30);
 		}else {
 			text(classNames[classIndex], 20, 30);
 			dataCount = trainingData.get(classNames[classIndex]).size();
 			text("Data collected: " + dataCount, 20, 60);
 		}
 		
-		if (!guessedLabel.equals("") && !hasPrinted) {
-			// hasPrinted = true;
-			mainTime = System.currentTimeMillis();
-			numSample++;
-			
-			if (guessedLabel.equals("palm"))
-			{
-				numPalm++;
-				if (numPalm == 1)
-					timePalm = mainTime;
+		//score message
+		text(scoreMsg, 100, 60);
+		//combo message
+		text(comboMsg, 250, 30);
+		//current score
+		text("Your current score: " + score, 100, 130);
+		//Detection Message
+		text("Classified as: "+printLabel, 10, 30);
+		
+		int xDiff = xCors.size() > 0 ? xCors.get(0) - 10 : 999;
+		
+		if (xDiff >= 70) {
+			return;
+		}
+		
+		mainTime = System.currentTimeMillis();
+		numSample++;
+		
+		String targetLabel = labels.size() > 0 ? labels.get(0) : "quiet";
+		
+		if (targetLabel.equals("quiet")) {
+			return;
+		}
+		
+		if (guessedLabel.equals("palm"))
+		{
+			numPalm++;
+			if (numPalm == 1)
+				timePalm = mainTime;
+		}
+		else if (guessedLabel.equals("shake"))
+		{
+			numShake++;
+			if (numShake == 1)
+				timeShake = mainTime;
+		}
+		
+		
+		System.out.println(numSample);
+		
+
+		if (numSample == 60) {
+
+			comboMsg = "";
+			if (numPalm != 0 && numShake > 5) {
+				guessedLabel = "shake";
+				mainTime = timeShake;
 			}
-			else if (guessedLabel.equals("shake"))
+			else if (numPalm != 0)
 			{
-				numShake++;
-				if (numShake == 1)
-					timeShake = mainTime;
+				guessedLabel = "palm";
+				mainTime = timePalm;
 			}
-			
-			if (numSample == 100)
+			else
 			{
-				hasPrinted = true;
-				if (numPalm != 0 && numShake > 5)
-				{
-					guessedLabel = "shake";
-					mainTime = timeShake;
-				}
-				else if (numPalm != 0)
-				{
-					guessedLabel = "palm";
-					mainTime = timePalm;
-				}
-				else
-				{
-					guessedLabel = "quiet";
+				guessedLabel = "quiet";
+			}
+			printLabel = guessedLabel;
+			if (guessedLabel.equals(targetLabel)) {
+				text("You are correct!", 100, 0);
+				labels.remove(0);
+				xCors.remove(0);
+				
+				if (xDiff >= 0) {
+					red += 70;
+					
+					if (red > 255) {
+						red = 255;
+					}
 				}
 				
-				if (guessedLabel.equals(classNames[randomIndex])) {
-					System.out.println("You are correct!");
-				} else {
-					System.out.println("You are wrong!");
-				}
-				
-				System.out.println(guessedLabel);
-				System.out.println(mainTime);
-				System.out.println("Time Diff: " + (mainTime - timerTime));
-				
-				long timeDiff = mainTime - timerTime;
-				if (timeDiff < 0) {
-					System.out.println("You tapped too early!");
+				if (xDiff < 0) {
+					//text("Too Late!", 100, 30);
+					scoreMsg = "Too Late";
 					lastLevel = -1;
-				} else if (timeDiff > 1000) {
-					System.out.println("You are too slow!");
+					red = 0;
+				} else if (xDiff > 60) {
+					//text("Too Early!", 100, 30);
+					scoreMsg = "Too Early";
 					lastLevel = -1;
-				} else if (timeDiff > 500) {
-					System.out.println("You gained 1 points");
+					red = 0;
+				} else if (xDiff > 50) {
+					//text("You gained 1 points", 100, 30);
+					scoreMsg = "You gained 1 points";
 					score += 1;
 					
 					if (lastLevel >= 2) {
-						System.out.println("Combo + 1!");
+						text("Combo + 1!", 170, 30);
 						score += 1;
 					}
 					
 					lastLevel = max(lastLevel, 2);
-				} else if (timeDiff > 300) {
-					System.out.println("You gained 3 points");
+				} else if (xDiff > 40) {
+					//text("You gained 3 points", 100, 30);
+					scoreMsg = "You gained 3 points";
 					score += 3;
 					
 					if (lastLevel >= 3) {
-						System.out.println("Combo + 1!");
+						//text("Combo + 1!", 170, 30);
+
+						comboMsg = "Combo +1!";
 						score += 3;
 					}
 					
 					lastLevel = max(lastLevel, 3);
-				} else if (timeDiff > 100) {
-					System.out.println("You gained 9 points");
+				} else if (xDiff > 30) {
+					//text("You gained 9 points", 100, 30);
+
+					scoreMsg = "You gained 9 points";
 					score += 9;
 					
 					if (lastLevel >= 4) {
-						System.out.println("Combo + 1!");
+						//text("Combo + 1!", 170, 30);
+
+						comboMsg = "Combo +1!";
 						score += 9;
 					}
 					
 					lastLevel = max(lastLevel, 4);
 				} else {
-					System.out.println("You gained 50 points");
+					//text("You gained 50 points",100,30);
+
+					scoreMsg = "You gained 50 points";
 					score += 50;
 					
 					if (lastLevel >= 5) {
-						System.out.println("Combo + 1!");
+						//text("Combo + 1!", 170, 30);
+						comboMsg = "Combo +1!";
 						score += 50;
 					}
 					lastLevel = max(lastLevel, 5);
 				}
-				
-				System.out.println("Your current score: " + score);
-				
-				numSample = 0;
-				numShake = 0;
-				numPalm = 0;
-				timeShake = 0;
-				timePalm = 0;
+			} else {
+				//text("You are wrong!", 100, 30);
+				scoreMsg = "You are wrong!";
+				red = 0;
 			}
-			 
-//			if (guessedLabel.equals(classNames[randomIndex])) {
-//				System.out.println("You are correct!");
-//			} else {
-//				System.out.println("You are wrong!");
-//			}
-//			
-//			System.out.println(guessedLabel);
-//			System.out.println(mainTime);
-//			System.out.println("Time Diff: " + (mainTime - timerTime));
-//			
-//			long timeDiff = mainTime - timerTime;
-//			if (timeDiff < 0) {
-//				System.out.println("You tapped too early!");
-//				lastLevel = -1;
-//			} else if (timeDiff > 1000) {
-//				System.out.println("You are too slow!");
-//				lastLevel = -1;
-//			} else if (timeDiff > 500) {
-//				System.out.println("You gained 1 points");
-//				score += 1;
-//				
-//				if (lastLevel >= 2) {
-//					System.out.println("Combo + 1!");
-//					score += 1;
-//				}
-//				
-//				lastLevel = max(lastLevel, 2);
-//			} else if (timeDiff > 300) {
-//				System.out.println("You gained 3 points");
-//				score += 3;
-//				
-//				if (lastLevel >= 3) {
-//					System.out.println("Combo + 1!");
-//					score += 3;
-//				}
-//				
-//				lastLevel = max(lastLevel, 3);
-//			} else if (timeDiff > 100) {
-//				System.out.println("You gained 9 points");
-//				score += 9;
-//				
-//				if (lastLevel >= 4) {
-//					System.out.println("Combo + 1!");
-//					score += 9;
-//				}
-//				
-//				lastLevel = max(lastLevel, 4);
-//			} else {
-//				System.out.println("You gained 50 points");
-//				score += 50;
-//				
-//				if (lastLevel >= 5) {
-//					System.out.println("Combo + 1!");
-//					score += 50;
-//				}
-//				lastLevel = max(lastLevel, 5);
-//			}
-//			
-//			System.out.println("Your current score: " + score);
+
+			
+			System.out.println(guessedLabel);	
+			System.out.println("Your current score: " + score);
+			
+			numSample = 0;
+			numShake = 0;
+			numPalm = 0;
+			timeShake = 0;
+			timePalm = 0;
 		}
 	}
 	
