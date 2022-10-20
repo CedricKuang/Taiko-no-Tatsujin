@@ -88,7 +88,7 @@ public class ClassifyVibration extends PApplet {
                 	labels.add(classNames[randomIndex]);
             		xCors.add(800);
                     try {
-						Thread.sleep(1500 + (int)(Math.random() * 500));
+						Thread.sleep(2000 + (int)(Math.random() * 2000));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -176,13 +176,8 @@ public class ClassifyVibration extends PApplet {
 		textSize(30);
 		
 		for (int i = 0; i < labels.size(); i++) {
-			if (labels.get(i).equals("palm")) {
-				text("hit", xCors.get(i), yCor);
-			} else {
-				text(labels.get(i), xCors.get(i), yCor);
-			}
-			
-			xCors.set(i,  xCors.get(i) - 2);
+			text(labels.get(i), xCors.get(i), yCor);
+			xCors.set(i,  xCors.get(i) - 1);
 			
 			if (xCors.get(i) < 0) {
 				labels.remove(i);
@@ -194,12 +189,7 @@ public class ClassifyVibration extends PApplet {
 		if(classifier != null) {
 			guessedLabel = classifier.classify(captureInstance(null));
 		}else {
-			if (classNames[classIndex].equals("palm")) {
-				text("hit", 20, 30);
-			} else {
-				text(classNames[classIndex], 20, 30);
-			}
-			
+			text(classNames[classIndex], 20, 30);
 			dataCount = trainingData.get(classNames[classIndex]).size();
 			text("Data collected: " + dataCount, 20, 60);
 		}
@@ -211,13 +201,7 @@ public class ClassifyVibration extends PApplet {
 		//current score
 		text("Your current score: " + score, 100, 130);
 		//Detection Message
-		
-		if (printLabel.equals("palm")) {
-			text("Classified as: hit", 10, 30);
-		} else {
-			text("Classified as: "+printLabel, 10, 30);
-		}
-		
+		text("Classified as: "+printLabel, 10, 30);
 		
 		int xDiff = xCors.size() > 0 ? xCors.get(0) - 10 : 999;
 		
@@ -251,7 +235,7 @@ public class ClassifyVibration extends PApplet {
 		System.out.println(numSample);
 		
 
-		if (numSample == 30) {
+		if (numSample == 60) {
 
 			comboMsg = "";
 			if (numPalm != 0 && numShake > 5) {

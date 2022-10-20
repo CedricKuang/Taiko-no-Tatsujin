@@ -88,7 +88,7 @@ public class ClassifyVibration extends PApplet {
                 	labels.add(classNames[randomIndex]);
             		xCors.add(800);
                     try {
-						Thread.sleep(1500 + (int)(Math.random() * 500));
+						Thread.sleep(2000 + (int)(Math.random() * 500));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

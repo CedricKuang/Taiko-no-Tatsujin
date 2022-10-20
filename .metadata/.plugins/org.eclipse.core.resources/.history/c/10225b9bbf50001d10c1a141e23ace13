@@ -88,7 +88,7 @@ public class ClassifyVibration extends PApplet {
                 	labels.add(classNames[randomIndex]);
             		xCors.add(800);
                     try {
-						Thread.sleep(1500 + (int)(Math.random() * 500));
+						Thread.sleep(2000 + (int)(Math.random() * 500));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -211,13 +211,7 @@ public class ClassifyVibration extends PApplet {
 		//current score
 		text("Your current score: " + score, 100, 130);
 		//Detection Message
-		
-		if (printLabel.equals("palm")) {
-			text("Classified as: hit", 10, 30);
-		} else {
-			text("Classified as: "+printLabel, 10, 30);
-		}
-		
+		text("Classified as: "+printLabel, 10, 30);
 		
 		int xDiff = xCors.size() > 0 ? xCors.get(0) - 10 : 999;
 		
