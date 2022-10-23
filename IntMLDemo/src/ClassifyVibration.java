@@ -97,7 +97,7 @@ public class ClassifyVibration extends PApplet {
         };
         thread.start();
 		PApplet.main("ClassifyVibration");
-	}
+	}     
 	
 	public void settings() {
 		size(512, 400);

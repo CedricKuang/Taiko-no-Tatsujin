@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value=".get"/>
+		<item key="selection" value="Classified"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="classified"/>
+			<item value="text("/>
 			<item value=".get"/>
 			<item value="xCors.get"/>
 			<item value="labels.get"/>
-			<item value="classified"/>
 			<item value="Time Diff"/>
 			<item value="text"/>
 			<item value="tip"/>
